@@ -1,9 +1,7 @@
 const Express = require("express")
 const path = require('path')
 const mysql = require('mysql2')
-const bodyParser = require('body-parser')
 const hbs = require('express-handlebars')
-
 const app = Express()
 
 app.set("views", path.join(__dirname, "views"))
@@ -16,9 +14,9 @@ app.engine("hbs", hbs.engine({
 
 app.use(Express.static("public"))
 
+const bodyParser = require('body-parser')
+
 app.use(bodyParser.urlencoded({extended: true}))
-
-
 
 
 const con = mysql.createConnection({
@@ -33,32 +31,10 @@ con.connect((err) =>{
     console.log('connected to mysql db')
 })
 
-app.get('/', (req, res) => {
-    let query = 'SELECT * FROM article'
-    let articles = []
-    con.query(query, (err, result) => {
-        if (err) throw err
-        articles = result
-        res.render('index', { articles:articles })
-    })
-})
+const articleRoutes = require('./routes/article.js')
 
-app.get('/article/:slug', (req, res) => {
-    let query1 = `SELECT * FROM article WHERE slug = '${req.params.slug}'`
-    con.query(query1, (err, result1) => {
-        if (err) throw err
-        let article = result1[0]
-
-        let query2 = `SELECT name FROM author WHERE id = '${article.author_id}'`
-
-        con.query(query2, (err, result2) => {
-            if (err) throw err
-            article.author_name = result2[0].name
-            console.log(result2)
-            res.render('article', {article:article})
-        })
-    })
-})
+app.use('/', articleRoutes)
+app.get('/article', articleRoutes)
 
 app.get('/author/:author_id', (req, res) => {
     let query = `SELECT * FROM article WHERE author_id = ${req.params.author_id}`
