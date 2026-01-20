@@ -60,6 +60,17 @@ app.get('/article/:slug', (req, res) => {
     })
 })
 
+app.get('/author/:author_id', (req, res) => {
+    let query = `SELECT * FROM articles WHERE author_id = ${req.params.author_id}`
+
+    con.query(query, (err, result) => {
+        if (err) throw err
+        let articles = result
+
+        res.render
+    })
+})
+
 app.listen(3001, () =>{
     console.log('app is at http://localhost:3001')
 })
