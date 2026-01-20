@@ -18,7 +18,7 @@ const getArticleBySlug = (req, res) => {
 
         let query2 = `SELECT name FROM author WHERE id = '${article.author_id}'`
 
-        con.query(query2, (err, result2) => {
+        connection.query(query2, (err, result2) => {
             if (err) throw err
             article.author_name = result2[0].name
             console.log(result2)
